@@ -14,6 +14,11 @@ public class App {
         tm.addTask(new Task("very important task", "This is indeed a very important Task!"));
         tm.addTask(new DeadlineTask("2021 Deadline", new GregorianCalendar(2021,0,1)));
 
+        System.out.println("Print all Tasks:");
+        tm.getTasklist().forEach(t -> {
+            System.out.println("### Task ###\n" + t);
+        });
+
         System.out.println("Search for \"1st\":");
         tm.searchTaskList("1st").forEach(t -> System.out.println("#######\n"+t));
 
