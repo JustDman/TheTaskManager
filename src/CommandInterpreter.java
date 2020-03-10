@@ -1,13 +1,13 @@
-import java.util.Scanner;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 public class CommandInterpreter {
-
-    Scanner scan = new Scanner(System.in);
 
     final TaskManager tm;
 
     public CommandInterpreter(TaskManager manager) {
         tm = manager;
+        start();
     }
 
     public void showMenu() {
@@ -25,7 +25,7 @@ public class CommandInterpreter {
         String s = "-";
         while (!s.equals("x")) {
             showMenu();
-            s = scan.nextLine();
+            s = (String) Input.get(Input.STRING, "");
             switch (s) {
                 case "1":
                     this.showAll();
@@ -51,29 +51,93 @@ public class CommandInterpreter {
                     break;
             }
         }
-        scan.close();
+        Input.close();
     }
 
     public void showAll() {
-        tm.getTasklist().forEach(e -> 
-        System.out.println(e));
+        System.out.println("***********************TASKLIST***********************");
+        tm.getTasklist().forEach(e -> {
+            System.out.println(e);
+            System.out.println();
+        });
     }
 
     public void searchAll() {
-        System.out.println("RECHNEN 1+1 = 2");
+        tm.searchTaskList((String) Input.get(Input.STRING, "What keyword do you want to search for?")).forEach(e -> {
+            System.out.println(e);
+            System.out.println();
+        });
+
     }
 
     public void showDeadlines() {
+        tm.searchDeadline().forEach(e -> {
+            System.out.println(e);
+            System.out.println();
+        });
     }
 
     public void createNewTask() {
+        String s = "-";
+        String title;
+        String description;
+        boolean addTask = true;
+        GregorianCalendar greg = new GregorianCalendar();
 
+        while (addTask) {
+            s = (String) Input.get(Input.STRING,
+                    "Which kind of task do you want to create?\n1) Task\n2) Task with deadline\nx) Exit");
+
+            switch (s) {
+                case "1":
+                    title = (String) Input.get(Input.STRING, "Enter title!");
+                    description = (String) Input.get(Input.STRING, "Enter description (leave empty if none)!");
+                    if (!(description.length() < 1)) {
+                        tm.addTask(new Task(title, description));
+                    } else {
+                        tm.addTask(new Task(title));
+                    }
+                    break;
+                case "2":
+                    title = (String) Input.get(Input.STRING, "Enter title!");
+                    description = (String) Input.get(Input.STRING, "Enter description (leave empty if none)!");
+                    System.out.println("ENTER TIME OF DEADLINE!");
+                    greg.set((int) Input.get(Input.INT, "Enter year!"), (int) Input.get(Input.INT, "Enter month!"),
+                            (int) Input.get(Input.INT, "Enter day!"), (int) Input.get(Input.INT, "Enter hour!"),
+                            (int) Input.get(Input.INT, "Enter minute!"), 00);
+                    if (!(description.length() < 1)) {
+
+                        tm.addTask(new DeadlineTask(title, greg, description));
+                    } else {
+                        tm.addTask(new DeadlineTask(title, greg));
+                    }
+                    break;
+                default:
+                    System.out.println("Wrong input!");
+                    addTask = false;
+                    break;
+            }
+        }
     }
 
     public void finishTask() {
+        List<Task> t = tm.getTasklist();
+
+        for (int i = 0; i < t.size(); i++) {
+            System.out.print(i + 1 + ") ");
+            System.out.println(t.get(i));
+        }
+        tm.setDone(tm.getTaskById((int) (Input.get(Input.INT, "Select ID of task to be set completed!")) - 1), true);
     }
 
     public void deleteTask() {
+        List<Task> t = tm.getTasklist();
+
+        for (int i = 0; i < t.size(); i++) {
+            System.out.print(i + 1 + ") ");
+            System.out.println(t.get(i));
+        }
+        tm.deleteTask(tm.getTaskById((int) Input.get(Input.INT, "Select ID of task to be deleted!") - 1));
     }
 
     public void error() {

@@ -51,6 +51,10 @@ public class Task {
     @Override
     public String toString() {
         String str = taskTitle + "\n" + getCreationDate() + "\n" + taskDescription;
+        if (done)
+            str += "\nTask complete!";
+        else
+            str += "\nTask incomplete!";
         return str;
     }
 }

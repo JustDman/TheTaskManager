@@ -3,11 +3,9 @@ import java.util.List;
 
 public class TaskManager {
 
-    // TODO not this
-    public List<Task> taskList = new ArrayList<>();
+    private List<Task> taskList = new ArrayList<>();
 
     public TaskManager() {
-        taskList.add(new Task("BANANA"));
     }
 
     public List<Task> getTasklist() {
@@ -51,6 +49,10 @@ public class TaskManager {
     public void deleteTask(Task task) {
         if (taskList.contains(task))
             taskList.remove(task);
+    }
+
+    public Task getTaskById(int index) {
+        return taskList.get(index);
     }
 
 }
